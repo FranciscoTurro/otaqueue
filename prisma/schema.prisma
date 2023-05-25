@@ -8,11 +8,23 @@ datasource db {
     relationMode = "prisma"
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Anime {
+    id         String @id
+    title      String
+    engTitle   String
+    japTitle   String
+    episodes   Int
+    studios    String @db.LongText
+    genres     String @db.LongText
+    synopsis   String @db.LongText
+    type       String //tv/movie
+    score      Float  @db.Float
+    popularity Int
+    year       Int //instead of rank
+    pictureURL String
 }
+
+//watchlist: anime array and what not
 
 // NEXT AUTH MODELS
 model Account {
