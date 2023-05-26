@@ -18,12 +18,12 @@ export const createAnime = (anime: JikanResponse): AnimeType => {
     engTitle: anime.title_english,
     japTitle: anime.title_japanese,
     episodes: anime.episodes,
-    pictureURL: anime.images.jpg.image_url, //I WANT THE LARGE IMAGE
     popularity: anime.popularity,
     score: anime.score,
     synopsis: anime.synopsis,
     title: anime.title,
     type: anime.type,
+    pictureURL: anime.images.jpg.large_image_url ?? anime.images.jpg.image_url,
     year: anime.year ?? getYearFromAired(anime.aired.from),
     genres: parsedGenres,
     studios: parsedStudios,

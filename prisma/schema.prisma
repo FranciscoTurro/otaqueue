@@ -9,24 +9,41 @@ datasource db {
 }
 
 model Anime {
-    id         String @id
+    id         String      @id
     title      String
     engTitle   String
     japTitle   String
     episodes   Int
-    studios    String @db.LongText
-    genres     String @db.LongText
-    synopsis   String @db.LongText
-    type       String //tv/movie
-    score      Float  @db.Float
+    studios    String      @db.LongText
+    genres     String      @db.LongText
+    synopsis   String      @db.LongText
+    type       String
+    score      Float       @db.Float
     popularity Int
-    year       Int //instead of rank
+    year       Int
     pictureURL String
+    watchlists Watchlist[]
 }
 
-//watchlist: anime array and what not
+model Watchlist {
+    id     String  @id @default(cuid())
+    userId String  @unique
+    user   User    @relation(fields: [userId], references: [id])
+    anime  Anime[]
+}
 
 // NEXT AUTH MODELS
+model User {
+    id            String     @id @default(cuid())
+    name          String?
+    email         String?    @unique
+    emailVerified DateTime?
+    image         String?
+    accounts      Account[]
+    sessions      Session[]
+    watchlist     Watchlist?
+}
+
 model Account {
     id                String  @id @default(cuid())
     userId            String
@@ -54,16 +71,6 @@ model Session {
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@index([userId])
-}
-
-model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
 }
 
 model VerificationToken {
