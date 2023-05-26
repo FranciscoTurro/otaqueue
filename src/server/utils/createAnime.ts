@@ -12,6 +12,9 @@ export const createAnime = (anime: JikanResponse): AnimeType => {
   const parsedStudios = JSON.stringify(
     anime.studios.map((studio) => studio.name)
   );
+  const cleanSynopsis = anime.synopsis
+    .replace("[Written by MAL Rewrite]", "")
+    .trim();
 
   return {
     id: anime.mal_id.toString(),
@@ -20,11 +23,11 @@ export const createAnime = (anime: JikanResponse): AnimeType => {
     episodes: anime.episodes,
     popularity: anime.popularity,
     score: anime.score,
-    synopsis: anime.synopsis,
     title: anime.title,
     type: anime.type,
     pictureURL: anime.images.jpg.large_image_url ?? anime.images.jpg.image_url,
     year: anime.year ?? getYearFromAired(anime.aired.from),
+    synopsis: cleanSynopsis,
     genres: parsedGenres,
     studios: parsedStudios,
   };
