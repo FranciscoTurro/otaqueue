@@ -7,7 +7,7 @@ const getYearFromAired = (aired: string): number => {
   else return 9999;
 };
 
-export const createAnime = (anime: JikanResponse): AnimeType => {
+export const formatAnime = (anime: JikanResponse): AnimeType => {
   const parsedGenres = JSON.stringify(anime.genres.map((genre) => genre.name));
   const parsedStudios = JSON.stringify(
     anime.studios.map((studio) => studio.name)
@@ -18,13 +18,13 @@ export const createAnime = (anime: JikanResponse): AnimeType => {
 
   return {
     id: anime.mal_id.toString(),
-    engTitle: anime.title_english,
     japTitle: anime.title_japanese,
     episodes: anime.episodes,
     popularity: anime.popularity,
     score: anime.score,
     title: anime.title,
     type: anime.type,
+    engTitle: anime.title_english ?? "No provided english title",
     pictureURL: anime.images.jpg.large_image_url ?? anime.images.jpg.image_url,
     year: anime.year ?? getYearFromAired(anime.aired.from),
     synopsis: cleanSynopsis,

@@ -4,18 +4,22 @@ import { api } from "../../utils/api";
 import Head from "next/head";
 
 const AnimePage: NextPage<{ id: string }> = ({ id }) => {
-  const { data } = api.anime.getAnimeById.useQuery({ id });
+  const { data: animeData } = api.anime.getAnimeById.useQuery({ id });
+
+  if (!animeData) {
+    return <div>Error!</div>; //unsure if this is enough error handling. i would like to make it clear that certain IDs dont match any anime
+  }
 
   return (
     <>
       <Head>
-        <title>{`${data?.title ?? ""} - Otaqueue`}</title>
+        <title>{`${animeData.title ?? ""} - Otaqueue`}</title>
       </Head>
-      <div>{data?.synopsis}</div>
+
+      <div>{animeData.synopsis}</div>
     </>
   );
 };
-//THROW AN ERROR IF THE ID DOESNT MATCH AN ANIME
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const helpers = generateServerSideHelper();
