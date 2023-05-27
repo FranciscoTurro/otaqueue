@@ -1,9 +1,10 @@
 import { z } from "zod";
-import { createTRPCRouter, privateProcedure } from "../trpc";
+import { createTRPCRouter, privateProcedure, publicProcedure } from "../trpc";
 import type { Prisma, PrismaClient } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 
 const getUserWatchlist = async (
-  userId: string,
+  userEmail: string,
   prisma: PrismaClient<
     Prisma.PrismaClientOptions,
     never,
@@ -11,12 +12,12 @@ const getUserWatchlist = async (
   >
 ) => {
   let watchlist = await prisma.watchlist.findUnique({
-    where: { userId },
+    where: { userEmail },
     include: { anime: true },
   });
   if (!watchlist) {
     watchlist = await prisma.watchlist.create({
-      data: { userId },
+      data: { userEmail },
       include: { anime: true },
     });
   }
@@ -24,14 +25,33 @@ const getUserWatchlist = async (
 };
 
 export const watchlistRouter = createTRPCRouter({
-  getWatchlist: privateProcedure.query(async ({ ctx }) => {
+  getCurrentUserWatchlist: privateProcedure.query(async ({ ctx }) => {
+    if (!ctx.session.user.email) throw new TRPCError({ code: "NOT_FOUND" });
     const watchlist = await ctx.prisma.watchlist.findUnique({
-      where: { userId: ctx.session.user.id },
+      where: { userEmail: ctx.session.user.email },
       include: { anime: true },
     });
     if (!watchlist) throw new Error("No watchlist");
     return watchlist;
   }),
+  getWatchlistByUserEmail: publicProcedure
+    .input(
+      z.object({
+        userEmail: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const watchlist = await ctx.prisma.watchlist.findUnique({
+        where: { userEmail: input.userEmail },
+        include: { anime: true },
+      });
+
+      if (!watchlist) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      return watchlist;
+    }),
   addAnime: privateProcedure
     .input(
       z.object({
@@ -39,15 +59,18 @@ export const watchlistRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const watchlist = await getUserWatchlist(ctx.session.user.id, ctx.prisma);
+      if (!ctx.session.user.email) throw new TRPCError({ code: "NOT_FOUND" });
 
+      const watchlist = await getUserWatchlist(
+        ctx.session.user.email,
+        ctx.prisma
+      );
       const animeExists = watchlist.anime.find(
         (anime) => anime.id === input.animeId
       );
       if (animeExists) {
         throw new Error("Anime already exists in the watchlist");
       }
-
       await ctx.prisma.watchlist.update({
         where: { id: watchlist.id },
         data: { anime: { connect: { id: input.animeId } } },
@@ -61,7 +84,12 @@ export const watchlistRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const watchlist = await getUserWatchlist(ctx.session.user.id, ctx.prisma);
+      if (!ctx.session.user.email) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const watchlist = await getUserWatchlist(
+        ctx.session.user.email,
+        ctx.prisma
+      );
 
       const animeExists = watchlist.anime.find(
         (anime) => anime.id === input.animeId

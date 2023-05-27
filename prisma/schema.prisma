@@ -26,10 +26,10 @@ model Anime {
 }
 
 model Watchlist {
-    id     String  @id @default(cuid())
-    userId String  @unique
-    user   User    @relation(fields: [userId], references: [id])
-    anime  Anime[]
+    id        String  @id @default(cuid())
+    userEmail String  @unique
+    user      User    @relation(fields: [userEmail], references: [email])
+    anime     Anime[]
 }
 
 // NEXT AUTH MODELS
