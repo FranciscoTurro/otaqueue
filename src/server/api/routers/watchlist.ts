@@ -2,6 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, privateProcedure, publicProcedure } from "../trpc";
 import type { Prisma, PrismaClient } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { TRPCClientError } from "@trpc/client";
 
 const getUserWatchlist = async (
   userEmail: string,
@@ -31,7 +32,10 @@ export const watchlistRouter = createTRPCRouter({
       where: { userEmail: ctx.session.user.email },
       include: { anime: true },
     });
-    if (!watchlist) throw new Error("No watchlist");
+    if (!watchlist)
+      throw new TRPCClientError(
+        "You don't have a watchlist yet. Check some anime out to make one!"
+      );
     return watchlist;
   }),
   getWatchlistByUserEmail: publicProcedure
@@ -46,9 +50,8 @@ export const watchlistRouter = createTRPCRouter({
         include: { anime: true },
       });
 
-      if (!watchlist) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
+      if (!watchlist)
+        throw new TRPCClientError("This user doesn't have a watchlist yet.");
 
       return watchlist;
     }),
@@ -69,7 +72,10 @@ export const watchlistRouter = createTRPCRouter({
         (anime) => anime.id === input.animeId
       );
       if (animeExists) {
-        throw new Error("Anime already exists in the watchlist");
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Anime already in the watchlist",
+        });
       }
       await ctx.prisma.watchlist.update({
         where: { id: watchlist.id },
@@ -95,7 +101,10 @@ export const watchlistRouter = createTRPCRouter({
         (anime) => anime.id === input.animeId
       );
       if (!animeExists) {
-        throw new Error("Anime doesn't exist in the watchlist");
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Anime not on the watchlist",
+        });
       }
 
       await ctx.prisma.watchlist.update({

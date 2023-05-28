@@ -2,21 +2,31 @@ import type { NextPage, GetStaticProps } from "next";
 import { generateServerSideHelper } from "../../server/utils/serverSideHelper";
 import { api } from "../../utils/api";
 import Head from "next/head";
+import { LoadingSpinner } from "../../components/ui/LoadingSpinner";
 
 const AnimePage: NextPage<{ id: string }> = ({ id }) => {
-  const { data: animeData } = api.anime.getAnimeById.useQuery({ id });
+  const {
+    data: animeData,
+    error,
+    isLoading,
+  } = api.anime.getAnimeById.useQuery({ id }, { refetchOnWindowFocus: false });
 
-  if (!animeData) {
-    return <div>Error!</div>; //unsure if this is enough error handling. i would like to make it clear that certain IDs dont match any anime
-  }
+  if (error) return <div>{error.message}</div>;
+
+  if (isLoading)
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    );
 
   return (
     <>
       <Head>
-        <title>{`${animeData.title ?? ""} - Otaqueue`}</title>
+        <title>{`${animeData?.title ?? ""} - Otaqueue`}</title>
       </Head>
 
-      <div>{animeData.synopsis}</div>
+      <div>{animeData?.genres}</div>
     </>
   );
 };
