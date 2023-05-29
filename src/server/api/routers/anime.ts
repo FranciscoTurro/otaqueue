@@ -4,6 +4,7 @@ import { AnimeClient } from "@tutkli/jikan-ts";
 import { prisma } from "../../db";
 import { formatAnime } from "../../utils/formatAnime";
 import { TRPCClientError } from "@trpc/client";
+import { formatAnimeSearch } from "../../utils/formatAnimeSearch";
 
 const animeClient = new AnimeClient();
 
@@ -29,5 +30,17 @@ export const animeRouter = createTRPCRouter({
         }
       }
       return anime;
+    }),
+  searchAnime: publicProcedure
+    .input(
+      z.object({
+        keyword: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const { data } = await animeClient.getAnimeSearch({
+        q: input.keyword,
+      });
+      return formatAnimeSearch(data);
     }),
 });

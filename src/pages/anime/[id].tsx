@@ -26,7 +26,6 @@ const AnimePage: NextPage<{ id: string }> = ({ id }) => {
       <Head>
         <title>{`${animeData?.title ?? ""} - Otaqueue`}</title>
       </Head>
-
       <WatchlistButtons animeId={id} />
       <div>{animeData?.engTitle}</div>
       <div>{animeData.synopsis}</div>
