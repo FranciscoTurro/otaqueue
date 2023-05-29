@@ -1,10 +1,13 @@
 import type { NextPage } from "next";
 import { api } from "../../utils/api";
+import { LoadingSpinner } from "../../components/ui/LoadingSpinner";
 
 const SearchPage: NextPage<{ keyword: string }> = ({ keyword }) => {
-  const { data } = api.anime.searchAnime.useQuery({ keyword });
+  const { data, isLoading } = api.anime.searchAnime.useQuery({ keyword });
   //see how to do all that shingeki+no+kyojin on the url
   //PAGINATION LAD
+
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <div>
@@ -18,7 +21,8 @@ const SearchPage: NextPage<{ keyword: string }> = ({ keyword }) => {
 SearchPage.getInitialProps = (context) => {
   const keyword = context.query.keyword;
   if (typeof keyword !== "string") throw new Error("bad word");
-  return { keyword };
+  const decodedWord = decodeURIComponent(keyword).replace(/_/g, " ");
+  return { keyword: decodedWord };
 };
 
 export default SearchPage;

@@ -1,7 +1,6 @@
 import { type NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Button } from "../components/ui/Button";
-import { SearchBar } from "../components/SearchBar";
 
 const Home: NextPage = () => {
   return <AuthShowcase />;
@@ -17,7 +16,6 @@ const AuthShowcase: React.FC = () => {
       <p className="text-center text-2xl">
         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
       </p>
-      <SearchBar />
       <Button
         onClick={sessionData ? () => void signOut() : () => void signIn()}
       >

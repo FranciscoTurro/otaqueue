@@ -21,13 +21,17 @@ export const SearchBar = ({}) => {
 
   const onSubmit: SubmitHandler<Input> = (data) => {
     resetForm();
-    void router.push(`/search/${data.keyword}`);
+    const encodedKeyword = encodeURIComponent(data.keyword).replace(
+      /%20/g,
+      "_"
+    );
+    void router.push(`/search/${encodedKeyword}`);
   };
 
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <TextInput {...register("keyword")} />
+        <TextInput className="bg-red-50 text-black" {...register("keyword")} />
       </form>
     </div>
   );
