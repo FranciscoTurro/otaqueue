@@ -1,3 +1,4 @@
+import { signIn, signOut, useSession } from "next-auth/react";
 import { api } from "../utils/api";
 import { Button } from "./ui/Button";
 import { LoadingSpinner } from "./ui/LoadingSpinner";
@@ -9,6 +10,8 @@ interface WatchlistButtonsProps {
 export const WatchlistButtons: React.FC<WatchlistButtonsProps> = ({
   animeId,
 }) => {
+  const { data: sessionData } = useSession();
+
   const context = api.useContext();
 
   const { data, isLoading: getWatchlistLoading } =
@@ -31,6 +34,16 @@ export const WatchlistButtons: React.FC<WatchlistButtonsProps> = ({
   const animeExists = data?.anime.find((anime) => anime.id === animeId);
 
   if (getWatchlistLoading) return <LoadingSpinner />;
+
+  if (!sessionData?.user)
+    return (
+      <Button
+        className="w-36"
+        onClick={sessionData ? () => void signOut() : () => void signIn()}
+      >
+        Sign in
+      </Button>
+    );
 
   if (animeExists) {
     return (
