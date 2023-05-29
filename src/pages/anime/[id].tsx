@@ -3,17 +3,18 @@ import { generateServerSideHelper } from "../../server/utils/serverSideHelper";
 import { api } from "../../utils/api";
 import Head from "next/head";
 import { LoadingSpinner } from "../../components/ui/LoadingSpinner";
+import { WatchlistButtons } from "../../components/WatchlistButtons";
 
 const AnimePage: NextPage<{ id: string }> = ({ id }) => {
   const {
     data: animeData,
-    error,
-    isLoading,
+    error: animeError,
+    isLoading: animeLoading,
   } = api.anime.getAnimeById.useQuery({ id }, { refetchOnWindowFocus: false });
 
-  if (error) return <div>{error.message}</div>;
+  if (animeError) return <div>{animeError.message}</div>;
 
-  if (isLoading)
+  if (animeLoading)
     return (
       <div>
         <LoadingSpinner />
@@ -26,7 +27,9 @@ const AnimePage: NextPage<{ id: string }> = ({ id }) => {
         <title>{`${animeData?.title ?? ""} - Otaqueue`}</title>
       </Head>
 
-      <div>{animeData?.genres}</div>
+      <WatchlistButtons animeId={id} />
+      <div>{animeData?.engTitle}</div>
+      <div>{animeData.synopsis}</div>
     </>
   );
 };

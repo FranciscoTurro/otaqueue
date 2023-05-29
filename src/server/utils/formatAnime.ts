@@ -24,7 +24,7 @@ export const formatAnime = (anime: JikanResponse): AnimeType => {
     score: anime.score,
     title: anime.title,
     type: anime.type,
-    engTitle: anime.title_english ?? "No provided english title",
+    engTitle: anime.title_english ?? anime.title_japanese,
     pictureURL: anime.images.jpg.large_image_url ?? anime.images.jpg.image_url,
     year: anime.year ?? getYearFromAired(anime.aired.from),
     synopsis: cleanSynopsis,
