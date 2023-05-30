@@ -4,6 +4,7 @@ import { api } from "../../utils/api";
 import Head from "next/head";
 import { LoadingSpinner } from "../../components/ui/LoadingSpinner";
 import { WatchlistButtons } from "../../components/WatchlistButtons";
+import { Layout } from "../../components/Layout";
 
 const AnimePage: NextPage<{ id: string }> = ({ id }) => {
   const {
@@ -26,9 +27,11 @@ const AnimePage: NextPage<{ id: string }> = ({ id }) => {
       <Head>
         <title>{`${animeData?.title ?? ""} - Otaqueue`}</title>
       </Head>
-      <WatchlistButtons animeId={id} />
-      <div>{animeData?.engTitle}</div>
-      <div>{animeData.synopsis}</div>
+      <Layout>
+        <WatchlistButtons animeId={id} />
+        <div>{animeData?.engTitle}</div>
+        <div>{animeData.synopsis}</div>
+      </Layout>
     </>
   );
 };

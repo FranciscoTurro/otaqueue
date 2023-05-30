@@ -3,6 +3,8 @@ import type { NextPage } from "next";
 import { api } from "../../utils/api";
 import { LoadingSpinner } from "../../components/ui/LoadingSpinner";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Layout } from "../../components/Layout";
 
 const SearchPage: NextPage<{ keyword: string }> = ({ keyword }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,13 +26,17 @@ const SearchPage: NextPage<{ keyword: string }> = ({ keyword }) => {
   );
 
   return (
-    <div>
+    <Layout>
       <div className="text-2xl font-bold text-red-600">
         currently on page {currentPage}
       </div>
-      {data?.anime.map((anime) => (
-        <div key={anime.id}>{anime.title}</div>
-      ))}
+      <div className="flex flex-col">
+        {data?.anime.map((anime) => (
+          <Link href={`/anime/${anime.id}`} key={anime.id}>
+            {anime.title}
+          </Link>
+        ))}
+      </div>
       <div className="flex gap-10">
         {pages.map((page) => (
           <button
@@ -45,7 +51,7 @@ const SearchPage: NextPage<{ keyword: string }> = ({ keyword }) => {
           </button>
         ))}
       </div>
-    </div>
+    </Layout>
   );
 };
 

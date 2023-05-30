@@ -35,13 +35,13 @@ export const animeRouter = createTRPCRouter({
     .input(
       z.object({
         keyword: z.string(),
-        page: z.number().nullish(),
+        page: z.number().min(1),
       })
     )
     .query(async ({ input }) => {
       const { data, pagination } = await animeClient.getAnimeSearch({
         q: input.keyword,
-        page: input.page ?? undefined,
+        page: input.page,
       });
       return { anime: formatAnimeSearch(data), pagination };
     }),

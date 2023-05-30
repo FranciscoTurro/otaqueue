@@ -1,6 +1,7 @@
 import { type NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Button } from "../components/ui/Button";
+import { Layout } from "../components/Layout";
 
 const Home: NextPage = () => {
   return <AuthShowcase />;
@@ -12,7 +13,7 @@ const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 text-white">
+    <Layout>
       <p className="text-center text-2xl">
         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
       </p>
@@ -21,6 +22,6 @@ const AuthShowcase: React.FC = () => {
       >
         {sessionData ? "Sign out" : "Sign in"}
       </Button>
-    </div>
+    </Layout>
   );
 };

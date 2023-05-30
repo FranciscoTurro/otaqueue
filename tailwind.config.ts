@@ -12,6 +12,9 @@ export default {
     },
     extend: {
       colors: {
+        siteBorders: "#2F3336",
+        siteBackground: "#121212",
+        siteBackgroundHover: "#2020204D",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

@@ -3,6 +3,8 @@ import { generateServerSideHelper } from "../../server/utils/serverSideHelper";
 import { api } from "../../utils/api";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { Layout } from "../../components/Layout";
 
 const WatchlistPage: NextPage<{ email: string }> = ({ email }) => {
   const { data: sessionData } = useSession();
@@ -16,7 +18,7 @@ const WatchlistPage: NextPage<{ email: string }> = ({ email }) => {
   }
 
   return (
-    <>
+    <Layout>
       <Head>
         <title>{`${email}'s watchlist - Otaqueue`}</title>
       </Head>
@@ -26,11 +28,15 @@ const WatchlistPage: NextPage<{ email: string }> = ({ email }) => {
         ) : (
           <div>NOT your wlist</div>
         )}
-        {data.anime.map((anime) => (
-          <div key={anime.id}>{anime.engTitle}</div>
-        ))}
+        <div className="flex flex-col">
+          {data.anime.map((anime) => (
+            <Link href={`/anime/${anime.id}`} key={anime.id}>
+              {anime.engTitle}
+            </Link>
+          ))}
+        </div>
       </div>
-    </>
+    </Layout>
   );
 };
 
