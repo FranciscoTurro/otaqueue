@@ -4,7 +4,11 @@ import { Button } from "../components/ui/Button";
 import { Layout } from "../components/Layout";
 
 const Home: NextPage = () => {
-  return <AuthShowcase />;
+  return (
+    <Layout>
+      <AuthShowcase />
+    </Layout>
+  );
 };
 
 export default Home;
@@ -13,7 +17,7 @@ const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
 
   return (
-    <Layout>
+    <div>
       <p className="text-center text-2xl">
         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
       </p>
@@ -22,6 +26,6 @@ const AuthShowcase: React.FC = () => {
       >
         {sessionData ? "Sign out" : "Sign in"}
       </Button>
-    </Layout>
+    </div>
   );
 };
